@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Customize scrollbar */
+::-webkit-scrollbar {
+    width: 4px;  /* Set the width of the scrollbar */
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(100, 100, 100, 0.6);  /* Scrollbar thumb color */
+    border-radius: 10px;  /* Make the scrollbar thumb rounded */
+  }
+  
+  ::-webkit-scrollbar-track {
+    background-color: rgba(240, 240, 240, 0.9);  /* Scrollbar track (background) color */
+    border-radius: 10px;
+  }
+  
+  /* Customize scrollbar in Firefox */
+  body {
+    scrollbar-width: thin;  /* Set the width of the scrollbar */
+    scrollbar-color: rgba(100, 100, 100, 0.6) rgba(240, 240, 240, 0.9);  /* thumb color and track color */
+  }
+
+
+
+  /* Tambahkan ke file global.css atau Tailwind configuration */
+.react-select__control {
+    @apply border-gray-300 rounded-md p-1 shadow-sm focus:ring-blue-500 focus:border-blue-500;
+}
+
+.react-select__menu {
+    @apply bg-white rounded-md shadow-lg border border-gray-300 z-50;
+}
+
+.react-select__option {
+    @apply cursor-pointer hover:bg-blue-100 text-gray-700;
+}
+
+.react-select__option--is-selected {
+    @apply bg-blue-500 text-white;
+}
+
+.react-select__placeholder {
+    @apply text-gray-400;
+}
+
+.react-select__single-value {
+    @apply text-gray-700;
+}

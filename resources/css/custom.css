@@ -1,0 +1,73 @@
+/* Category Scrollbar */
+.scrollbar-hide {
+    @apply overflow-x-auto;
+    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+}
+
+
+/* ============ For Web Card Product Css ============ */
+.zoom-img{
+    /* width: 100%;
+    min-height: 300px;
+    max-height: 300px;
+    height: auto; */
+    transition: .3s ease all;
+    -webkit-transition: .3s ease all;
+    -moz-transition: .3s ease all;
+    -ms-transition: .3s ease all;
+    -o-transition: .3s ease all;
+}
+
+.zoom-img:hover{
+    /* transform: scale(1.1); */
+    scale: 108%;
+}
+/* ============ End For Web Card Product Css ============ */
+
+
+/* ============ For Account Sidebar ============ */
+ /* Untuk Firefox */
+ .hide-scrollbar {
+    scrollbar-width: none;
+  }
+  
+  /* Untuk Chrome, Safari, dan Edge */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* ============ End For Account Sidebar ============ */
+
+.bg-keren{
+    background: linear-gradient(90deg, #F6F8FD 29px, transparent 1%) center, linear-gradient(#F6F8FD 29px, transparent 1%) center, #bfc5d3;
+    background-size: 31px 31px;
+}
+
+.line-clamp-4 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: 4; /* Limit to 4 lines */
+}
+
+.line-clamp-none {
+    display: block;
+}
+
+/* .description {
+    transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+}
+
+.description.open {
+    max-height: 200px; 
+    opacity: 1; 
+} */
+
+
