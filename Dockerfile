@@ -56,7 +56,3 @@ RUN chown -R www-data:www-data \
 
 # Expose port 80
 EXPOSE 80
-
-# Health check - longer start period for Nginx+PHP-FPM initialization
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=5 \
-    CMD curl -f http://localhost/ || exit 1
