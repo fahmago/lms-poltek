@@ -37,7 +37,7 @@ class UsersDosenImport implements ToModel, WithHeadingRow
         }
 
         $user = User::create([
-            'name' => $row['name'],
+            'name' => ucwords(strtolower($row['name'])),
             'email' => $row['email'],
             'password' => Hash::make($row['password']),
         ]);

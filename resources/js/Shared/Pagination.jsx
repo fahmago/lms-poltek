@@ -6,8 +6,8 @@ export default function Pagination({ links, align = 'center' }) {
   // console.log(links);
   
   const labelMapping = {
-    "&laquo; Previous": "⬅️ Sebelumnya",
-    "Next &raquo;": "Selanjutnya ➡️",   
+    "&laquo; Previous": "Sebelumnya",
+    "Next &raquo;": "Selanjutnya",   
   };
 
   const updatedLinks = links.map(link => {

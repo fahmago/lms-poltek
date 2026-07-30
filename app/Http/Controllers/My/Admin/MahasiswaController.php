@@ -5,6 +5,7 @@ namespace App\Http\Controllers\My\Admin;
 use App\Helpers\QueryHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Angkatan;
+use App\Models\Harian\KelasHarianMahasiswa;
 use App\Models\Mahasiswa;
 use App\Models\Prodi;
 use App\Models\User;
@@ -26,20 +27,9 @@ class MahasiswaController extends Controller
                                 ->orWhere('email', 'like', '%' . $search . '%');
                         });
             });
-        })->with(['user','prodi','angkatan'])->paginate(10);
+        })->with(['user','prodi','angkatan','kelasHariansKehadiranStatus.dosen.user'])->paginate(10);
 
         $mahasiswas->appends(['q' => request()->q]);
-
-        // $mahasiswas = QueryHelper::applySearchAndPagination(
-        //     Mahasiswa::query()->with(['user', 'prodi']), // Base query
-        //     ['nim'], // Searchable fields
-        //     [
-        //         'user' => ['name', 'email'], // Related fields to search
-        //         'prodi' => ['nama_prodi'],
-        //     ],
-        //     request()->q, // Search keyword
-        //     5 // Per page
-        // );
 
         return inertia('My/Admin/Mahasiswa/Index', [
             'mahasiswas' => $mahasiswas,
@@ -179,72 +169,6 @@ class MahasiswaController extends Controller
         return redirect()->route('my.mahasiswas.index');
     }
 
-
-    // public function update(Request $request, $id)
-    // {
-    //     // Ambil data mahasiswa berdasarkan ID
-    //     $mahasiswa = Mahasiswa::findOrFail($id);
-
-    //     // Validasi input dari request
-    //     $validated = $request->validate([
-    //         'nim' => 'nullable|unique:mahasiswas,nim,' . $id, // Jangan validasi NIM jika NIM yang sama
-    //         'name' => 'required|string|max:255',
-    //         'email' => 'required|email|unique:users,email,' . $mahasiswa->user_id, // Validasi email unik kecuali pada mahasiswa yang sedang diupdate
-    //         'password' => 'nullable|string|min:4', // Password opsional, hanya jika ingin mengganti
-    //         'kode_prodi' => 'required|exists:prodis,kode_prodi',
-    //         'kode_tahun' => 'required|exists:angkatans,kode_tahun',
-    //         'tempat_lahir' => 'nullable|string',
-    //         'tanggal_lahir' => 'nullable|date',
-    //         'telepon' => 'nullable|string',
-    //         'gender' => 'nullable|string',
-    //         'alasan_pilih_idn' => 'nullable|string',
-    //         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-    //         'is_lengkap' => 'nullable|boolean', // Menambahkan status lengkap
-    //     ]);
-
-
-    //     User::find($mahasiswa->user_id)->update([
-    //         'name' => $request->name, 
-    //         'email' => $request->email
-    //     ]);
-
-    //     // Update data mahasiswa dengan data validasi yang sudah diterima
-    //     $mahasiswa->nim = $request->nim ?? $mahasiswa->nim;
-    //     // $mahasiswa->name = $request->name;
-    //     // $mahasiswa->email = $request->email;
-        
-    //     // Jika password tidak kosong, maka hash password baru
-    //     if ($request->password) {
-    //         User::find($mahasiswa->user_id)->update([
-    //             'password' => bcrypt($request->password)
-    //         ]);
-    //     }
-
-    //     $mahasiswa->kode_prodi = $request->kode_prodi;
-    //     $mahasiswa->kode_tahun = $request->kode_tahun;
-    //     $mahasiswa->tempat_lahir = $request->tempat_lahir;
-    //     $mahasiswa->tanggal_lahir = $request->tanggal_lahir;
-    //     $mahasiswa->telepon = $request->telepon;
-    //     $mahasiswa->gender = $request->gender;
-    //     $mahasiswa->alasan_pilih_idn = $request->alasan_pilih_idn;
-    //     $mahasiswa->is_lengkap = $request->is_lengkap ?? 0; // Default 0 jika tidak ada
-
-    //     if ($request->file('image')) {
-
-    //         Storage::disk('local')->delete('public/mahasiswa/'.basename($mahasiswa->image));
-
-    //         $image = $request->file('image');
-    //         $image->storeAs('public/mahasiswa', $image->hashName());
-    //         $mahasiswa->image = $image->hashName();
-    //     }
-
-    //     // Simpan perubahan
-    //     $mahasiswa->save();
-
-    //     // Setelah berhasil, kembalikan response atau redirect
-    //     return redirect()->route('my.mahasiswas.index');
-    // }
-
     public function destroy($uuid)
     {
         $mahasiswa = Mahasiswa::where('uuid', $uuid)->firstOrFail();
@@ -258,6 +182,13 @@ class MahasiswaController extends Controller
         $mahasiswa->delete();
 
         return redirect()->route('my.mahasiswas.index');
+    }
+
+    public function leaveClass($kelasHarianUuid)
+    {
+        $kelasHarianMahasiswa = KelasHarianMahasiswa::where('uuid', $kelasHarianUuid)->firstOrFail();
+        $kelasHarianMahasiswa->delete();
+        return redirect()->back()->with('success', 'Mahasiswa berhasil dikeluarkan dari kelas.');
     }
 
 

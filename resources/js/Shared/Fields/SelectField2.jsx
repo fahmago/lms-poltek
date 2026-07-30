@@ -1,15 +1,16 @@
 import React from 'react';
 import Select from 'react-select';
 
-const SelectField2 = ({ label, value, onChange, options, placeholder, error }) => {
+const SelectField2 = ({ label, value, onChange, options, placeholder, error, disabled = false }) => {
     const customStyles = {
-        control: (provided) => ({
+        control: (provided, state) => ({
             ...provided,
             borderWidth: 1,
             borderColor: error ? 'red' : 'gray',
             borderRadius: '0.375rem', // Tailwind's rounded-md
             padding: '0.25rem', // Tailwind's p-1
             boxShadow: error ? '0 0 0 1px red' : provided.boxShadow,
+            backgroundColor: state.isDisabled ? '#f3f4f6' : 'white',
         }),
         menu: (provided) => ({
             ...provided,
@@ -29,6 +30,7 @@ const SelectField2 = ({ label, value, onChange, options, placeholder, error }) =
                 isClearable
                 isSearchable
                 classNamePrefix="react-select"
+                isDisabled={disabled}
             />
             {error && <div className="text-red-500 text-sm mt-1">{error}</div>}
         </div>

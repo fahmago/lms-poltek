@@ -14,11 +14,68 @@ const Edit = () => {
     const [permissionsData, setPermissionsData] = useState(role.permissions.map(p => p.name) || []); // Inisialisasi dengan permissions yang sudah ada
     const [isLoading, setIsLoading] = useState(false); // State untuk menandai loading status
 
-    // Filter permission yang ada kata 'sidebar'
+    // Filter untuk permissions sidebar
     const sidebarPermissions = permissions.filter(permission => permission.name.includes('sidebar'));
 
-    // Permission yang bukan sidebar
-    const regularPermissions = permissions.filter(permission => !permission.name.includes('sidebar'));
+    // Filter untuk permissions dengan role "dsn"
+    const dosenPermissions = permissions
+    .filter(
+        permission =>
+            (
+                permission.name.includes('dsn') || 
+                permission.name === 'sidebar.dosen' ||
+                permission.name === 'sidebar.dosen.harian'
+            ) && 
+            permission.name !== 'users.dsn.excel' 
+    )
+    .sort((a, b) => {
+        // Pastikan "sidebar." selalu di urutan awal
+        if (a.name.startsWith('sidebar.') && !b.name.startsWith('sidebar.')) return -1;
+        if (!a.name.startsWith('sidebar.') && b.name.startsWith('sidebar.')) return 1;
+        return 0; // Urutan tetap jika keduanya sama
+    });
+
+    // Filter untuk permissions dengan role "mhs"
+    const mahasiswaPermissions = permissions
+    .filter(
+        permission =>
+            (
+                permission.name.includes('mhs') || 
+                permission.name === 'sidebar.mahasiswa' ||
+                permission.name === 'sidebar.mh.harian' ||
+                permission.name === 'sidebar.mh.profile' 
+            ) && 
+            permission.name !== 'dsn.mhs.view' &&
+            permission.name !== 'users.mhs.excel'
+    )
+    .sort((a, b) => {
+        // Pastikan "sidebar." selalu di urutan awal
+        if (a.name.startsWith('sidebar.') && !b.name.startsWith('sidebar.')) return -1;
+        if (!a.name.startsWith('sidebar.') && b.name.startsWith('sidebar.')) return 1;
+        return 0; // Urutan tetap jika keduanya sama
+    });
+
+    // Filter untuk permissions lainnya (bukan sidebar & bukan dsn)
+    const otherPermissions = permissions
+    .filter(
+        permission => 
+            (
+                !permission.name.includes('sidebar') && 
+                !permission.name.includes('mhs') && 
+                !permission.name.includes('dsn')
+            ) || 
+            permission.name === 'users.dsn.excel' ||
+            permission.name === 'users.mhs.excel' ||
+            permission.name === 'sidebar.admin' ||
+            permission.name === 'sidebar.harian' ||
+            permission.name === 'sidebar.akses'
+    )
+    .sort((a, b) => {
+        const priority = ["sidebar.admin", "sidebar.harian", "sidebar.akses"];
+        if (priority.includes(a.name) && !priority.includes(b.name)) return -1;
+        if (!priority.includes(a.name) && priority.includes(b.name)) return 1;
+        return 0; // Urutan tetap jika keduanya sama
+    });
 
     // Fungsi untuk mengubah nilai checkbox
     const handleCheckboxChange = (e) => {
@@ -95,9 +152,9 @@ const Edit = () => {
                             {/* Bagian untuk permissions sidebar */}
                             <div className="mb-4">
                                 <label className="block text-base font-medium text-gray-700">Permissions Sidebar</label>
-                                <div className="flex flex-col mt-2">
+                                <div className="flex flex-wrap mt-2">
                                     {sidebarPermissions.map((permission, index) => (
-                                        <div className="flex items-center space-x-2 w-1/2 md:w-1/3 lg:w-1/6 my-1" key={index}>
+                                        <div className="flex items-center space-x-2 w-1/2 md:w-1/3 lg:w-1/5 my-1" key={index}>
                                             <input
                                                 type="checkbox"
                                                 value={permission.name}
@@ -111,14 +168,65 @@ const Edit = () => {
                                     ))}                                  
                                 </div>
                             </div>
+
                             <hr className="my-4" />
 
-                            {/* Bagian untuk permissions regular */}
+                            {/* Bagian Permissions Dosen */}
                             <div className="mb-4">
-                                <label className="block text-base font-medium text-gray-700">Permissions</label>
+                                <label className="block text-base font-medium text-gray-700">Permissions Dosen</label>
                                 <div className="flex flex-wrap mt-2">
-                                    {regularPermissions.map((permission, index) => (
-                                        <div className="flex items-center space-x-2 w-1/2 md:w-1/3 lg:w-1/6 my-1" key={index}>
+                                    {dosenPermissions.map((permission, index) => (
+                                        <div className="flex items-center space-x-2 w-1/2 md:w-1/3 lg:w-1/4 my-1" key={index}>
+                                            <input
+                                                type="checkbox"
+                                                value={permission.name}
+                                                onChange={handleCheckboxChange}
+                                                id={`check-sidebar-${permission.id}`}
+                                                className="form-checkbox h-4 text-blue-600 focus:ring-blue-500"
+                                                checked={permissionsData.includes(permission.name)}
+                                            />
+                                            <label htmlFor={`check-sidebar-${permission.id}`} className="text-gray-700">{permission.name}</label>
+                                        </div>
+                                    ))}                                    
+                                </div>
+                                {errors.permissions && (
+                                    <p className="text-red-500 text-base mt-2">{errors.permissions}</p>
+                                )}
+                            </div>
+
+                            <hr className="my-4" />
+
+                            {/* Bagian Permissions Mahasiswa */}
+                            <div className="mb-4">
+                                <label className="block text-base font-medium text-gray-700">Permissions Mahasiswa</label>
+                                <div className="flex flex-wrap mt-2">
+                                    {mahasiswaPermissions.map((permission, index) => (
+                                        <div className="flex items-center space-x-2 w-1/2 md:w-1/3 lg:w-1/5 my-1" key={index}>
+                                            <input
+                                                type="checkbox"
+                                                value={permission.name}
+                                                onChange={handleCheckboxChange}
+                                                id={`check-sidebar-${permission.id}`}
+                                                className="form-checkbox h-4 text-blue-600 focus:ring-blue-500"
+                                                checked={permissionsData.includes(permission.name)}
+                                            />
+                                            <label htmlFor={`check-sidebar-${permission.id}`} className="text-gray-700">{permission.name}</label>
+                                        </div>
+                                    ))}                                    
+                                </div>
+                                {errors.permissions && (
+                                    <p className="text-red-500 text-base mt-2">{errors.permissions}</p>
+                                )}
+                            </div>
+
+                            <hr className="my-4" />
+
+                            {/* Bagian Permissions lainnya */}
+                            <div className="mb-4">
+                                <label className="block text-base font-medium text-gray-700">Permissions Admin</label>
+                                <div className="flex flex-wrap mt-2">
+                                    {otherPermissions.map((permission, index) => (
+                                        <div className="flex items-center space-x-2 w-1/2 md:w-1/3 lg:w-1/5 my-1" key={index}>
                                             <input
                                                 type="checkbox"
                                                 value={permission.name}
@@ -129,7 +237,7 @@ const Edit = () => {
                                             />
                                             <label htmlFor={`check-${permission.id}`} className="text-gray-700">{permission.name}</label>
                                         </div>
-                                    ))}                                  
+                                    ))}                                    
                                 </div>
                                 {errors.permissions && (
                                     <p className="text-red-500 text-base mt-2">{errors.permissions}</p>

@@ -45,7 +45,8 @@ class MataKuliahImport implements ToModel, WithHeadingRow
             return new Matkul([
                 'kode_prodi'  => $kodeProdi,
                 'kode_matkul' => trim($row['kode_matkul']),
-                'nama_matkul' => trim($row['nama_matkul']),
+                // 'nama_matkul' => trim($row['nama_matkul']),
+                'nama_matkul' => ucwords(strtolower(trim($row['nama_matkul']))),
                 'sks'         => $sks,
                 'semester'    => $semester,
                 'rps'         => trim($row['rps']),

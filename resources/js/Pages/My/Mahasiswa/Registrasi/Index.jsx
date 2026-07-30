@@ -52,7 +52,7 @@ const Create = () => {
                     <div className="bg-white shadow-sm rounded-md">
                         <div className="bg-blue-600 p-4 rounded-t-md">
                             <span className="font-bold text-white tracking-widest">
-                                <i className="fa fa-chalkboard-teacher mr-2"></i> Registrasi Kelas
+                                <i className="fa fa-registered mr-2"></i> Registrasi Kelas
                             </span>
                         </div>
                         <div className="p-6">

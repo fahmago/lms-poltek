@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const CurrentTime = () => {
+const CurrentTime = ({ color = 'text-white' }) => {
     const [currentTime, setCurrentTime] = useState(new Date());
 
     useEffect(() => {
@@ -23,7 +23,7 @@ const CurrentTime = () => {
     const seconds = currentTime.getSeconds().toString().padStart(2, '0');
 
     return (
-        <div className="text-white font-semibold tracking-widest">
+        <div className={`font-semibold tracking-widest ${color}`}>
             {/* {dayOfWeek}, {dayOfMonth} {month} {year} <i className="fa fa-hourglass-start fa-spin mx-2"></i> {hours}:{minutes}:{seconds} */}
             {dayOfWeek}, {dayOfMonth} {month} {year} <i className="fa fa-sync-alt fa-spin mx-1"></i> {hours}:{minutes}:{seconds}
         </div>

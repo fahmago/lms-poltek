@@ -1,0 +1,74 @@
+import React from 'react';
+import SelectField2 from '../../../../../../Shared/Fields/SelectField2';
+
+const FilterTahunSemesterTugasPekanan = ({
+    selectedTahun,
+    selectedSemester,
+    angkatans,
+    onFilterChange,
+    onReset,
+    onApply, // optional: untuk tombol tampilkan
+}) => {
+    const tahunOptions = angkatans.map((a) => ({
+        value: a.tahun_angkatan,
+        label: a.tahun_angkatan.toString(),
+    }));
+
+    const semesterOptions = [...Array(8)].map((_, i) => ({
+        value: i + 1,
+        label: `Semester ${i + 1}`,
+    }));
+
+    return (
+        <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 mb-1">
+            <h2 className="text-gray-700 font-semibold mb-4 text-lg">
+                Filter Tahun & Semester
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 items-center">
+                {/* Tahun */}
+                <SelectField2
+                    label="Tahun"
+                    value={selectedTahun}
+                    onChange={(e) => onFilterChange('tahun', e.target.value)}
+                    options={[{ value: '', label: 'Semua' }, ...tahunOptions]}
+                    placeholder="Pilih Tahun"
+                />
+
+                {/* Semester */}
+                <SelectField2
+                    label="Semester"
+                    value={selectedSemester}
+                    onChange={(e) => onFilterChange('semester', e.target.value)}
+                    options={[{ value: '', label: 'Semua' }, ...semesterOptions]}
+                    placeholder="Pilih Semester"
+                />
+
+                {/* Tombol Aksi */}
+                <div className="flex gap-3 items-center mt-2 sm:col-span-2 md:col-span-1">
+                    {onApply && (
+                        <button
+                            type="button"
+                            onClick={onApply}
+                            className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-6 h-[40px] rounded-full transition duration-150 flex items-center justify-center gap-2"
+                        >
+                            <i className="fa fa-search"></i> Tampilkan
+                        </button>
+                    )}
+
+                    {(selectedTahun || selectedSemester) && (
+                        <button
+                            type="button"
+                            onClick={onReset}
+                            className="bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-semibold px-6 h-[40px] rounded-full transition duration-150 flex items-center justify-center gap-2"
+                        >
+                            <i className="fa fa-undo"></i> Reset
+                        </button>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default FilterTahunSemesterTugasPekanan;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const DynamicModal = ({ isOpen, onClose, onSubmit, fields, title, isSubmitting, errors, tbutton = 'Update', tProses = 'Updating...' }) => {
+const DynamicModal = ({ isOpen, onClose, onSubmit, fields, title, isSubmitting, errors, tbutton = 'Update', tProses = 'Updating...', colorButton = 'green' }) => {
     const [formData, setFormData] = useState({});
 
     const handleChange = (e) => {
@@ -58,6 +58,7 @@ const DynamicModal = ({ isOpen, onClose, onSubmit, fields, title, isSubmitting, 
                                         onChange={handleChange}
                                         className="block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                         required={field.required || false}
+                                        disabled={field.disabled || false}
                                     />
                                 )}
 
@@ -76,7 +77,8 @@ const DynamicModal = ({ isOpen, onClose, onSubmit, fields, title, isSubmitting, 
                             </button>
                             <button
                                 type="submit"
-                                className="px-4 py-2 text-white bg-green-600 hover:bg-green-700 rounded-lg"
+                                className={`px-4 py-2 text-white bg-${colorButton}-600 hover:bg-${colorButton}-700 rounded-lg`}
+                                // className="px-4 py-2 text-white bg-green-600 hover:bg-green-700 rounded-lg"
                                 disabled={isSubmitting}  // Nonaktifkan tombol jika sedang mengirim
                             >
                                 {isSubmitting ? <><i className="fa fa-spinner fa-spin mr-2"></i>{tProses}</> : <>{tbutton}</>}

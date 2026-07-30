@@ -1,0 +1,210 @@
+import { Head, Link, usePage } from '@inertiajs/inertia-react';
+import React, { useState, useMemo } from 'react';
+import MyLayout from '../../../../../Layouts/MyLayout';
+import DataTableJadwal from '../../../../../Shared/DataTableJadwal';
+import formatDate from '../../../../../Utilities/formatDate';
+import CurrentTime from '../../../../../Utilities/CurrentTime';
+import DynamicModal from '../../../../../Shared/DynamicModal'; 
+import ToastNotification from '../../../../../Shared/ToastNotification';
+import { Inertia } from '@inertiajs/inertia';
+
+const ListNew = () => {
+    const { kelasHarian, jadwal, month, month2, flash } = usePage().props;
+
+    const headers = ["No.", "Tanggal", "Pengisian", "Waktu", "Actions"];
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentJadwal, setCurrentJadwal] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [showKodePresensi, setShowKodePresensi] = useState(false);
+    const [kodePresensi, setKodePresensi] = useState("");
+
+    const handleOpenModal = (jadwalId) => {
+        const jadwalItem = jadwal.find((item) => item.id === jadwalId);
+        if (jadwalItem) {
+            setCurrentJadwal(jadwalItem);
+            setIsModalOpen(true);
+        }
+    };
+
+    const handleOpenKodePresensi = (jadwalId) => {
+        const jadwalItem = jadwal.find((item) => item.id === jadwalId);
+        if (jadwalItem) {
+            setKodePresensi(jadwalItem.kode_unik);
+            setShowKodePresensi(true);
+        }
+    };
+
+    const handleCloseKodePresensi = () => {
+        setShowKodePresensi(false);
+        setKodePresensi("");
+    };
+
+    const handleUpdateJadwal = (formData) => {
+        setIsSubmitting(true);
+        Inertia.put(route('dsn.dh.jadwal.updateJadwal', currentJadwal.uuid), formData, {
+            onSuccess: () => {
+                setIsModalOpen(false);
+                ToastNotification({ icon: 'success', title: flash?.success || 'Update Jadwal Berhasil!' });
+            },
+            onError: (err) => setErrors(err),
+            onFinish: () => setIsSubmitting(false),
+        });
+    };
+
+    const calculateJamSelesai = (jamMulai, durasi) => {
+        const [hour, minute] = jamMulai.split(':').map(Number);
+        const startTime = new Date();
+        startTime.setHours(hour, minute, 0, 0);
+        startTime.setMinutes(startTime.getMinutes() + durasi);
+        return startTime.toTimeString().slice(0, 5);
+    };
+    
+    const copyToClipboard = () => {
+        const textToCopy = `Kode Presensi: ${kodePresensi}`;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            ToastNotification({ icon: 'success', title: 'Kode berhasil disalin!' });
+        }).catch(() => {
+            ToastNotification({ icon: 'error', title: 'Gagal menyalin kode.' });
+        });
+    };
+
+    const rows = useMemo(() => {
+        // const todayString = new Date().toISOString().slice(0, 10);
+        const now = new Date(); // Membuat objek tanggal dengan waktu lokal (WIB)
+        const year = now.getFullYear(); // -> 2025
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // -> "10"
+        const day = String(now.getDate()).padStart(2, '0'); // -> "10"
+        const tanggalWIB = `${year}-${month}-${day}`; 
+
+        return jadwal.map((item, index) => {
+            const isToday = item.tanggal == tanggalWIB;
+            // console.log(item.tanggal, tanggalWIB);
+            return {
+                className: isToday ? 'bg-green-100 font-bold text-green-900 text-xl hover:bg-green-100' : '',
+                data: [
+                    <span className={isToday ? '' : ''}>{index + 1}</span>,
+                    <span className={isToday ? '' : ''}>{formatDate(item.tanggal)}</span>,
+                    <span className={isToday ? '' : ''}>{item.kelas_harian.jam_mulai.slice(0, 5) + " - " + calculateJamSelesai(item.kelas_harian.jam_mulai, parseInt(item.waktu_isi_absen))}</span>,
+                    <span className={isToday ? '' : ''}>{item.kelas_harian.jam_mulai.slice(0, 5) + " - " + calculateJamSelesai(item.kelas_harian.jam_mulai, item.kelas_harian.durasi)}</span>,
+                    (
+                        <div className="flex justify-center gap-2">
+                            <button
+                                onClick={() => handleOpenKodePresensi(item.id)}
+                                className="focus:outline-none text-white bg-gray-700 hover:bg-gray-800 font-medium rounded-lg text-sm px-5 py-2.5"
+                            >
+                                <i className="fa fa-qrcode mr-2"></i>Kode
+                            </button>
+                            <button
+                                onClick={() => handleOpenModal(item.id)}
+                                className="focus:outline-none text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5"
+                            >
+                                <i className="fa fa-edit mr-2"></i>Edit
+                            </button>
+                        </div>
+                    ),
+                ]
+            };
+        });
+    }, [jadwal]);
+
+    return (
+        <>
+            <Head title={`Jadwal Bulan ${month}`} />
+            <MyLayout>
+                <div className="mt-5">
+                    <div className="bg-white shadow-sm rounded-md">
+                        {/* <div className="bg-blue-600 p-4 rounded-t-md flex justify-between items-center"> */}
+                            <div className="bg-blue-600 p-4 rounded-t-md flex flex-col items-center gap-2 md:flex-row md:justify-between">
+                            <span className="font-bold text-white tracking-widest">
+                                <i className="fa fa-info-circle mr-2"></i> Detail Kelas: {kelasHarian.nama_kelas} ({kelasHarian.kode_kelas_harian})
+                            </span>
+                            <CurrentTime />
+                        </div>
+                        <div className="p-6">
+                            <div className="mb-4">
+                               <table className="w-full text-sm">
+                                    <tbody>
+                                        <tr>
+                                            <td className="py-1 font-semibold pr-3 w-1/5">Kode Kelas</td>
+                                            <td className="py-1 pl-3 w-3/4">: {kelasHarian.kode_kelas_harian}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="py-1 font-semibold pr-3 w-1/5">Kelas</td>
+                                            <td className="py-1 pl-3 w-3/4">: {kelasHarian.nama_kelas}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="py-1 font-semibold pr-3 w-1/5">Tahun Semester</td>
+                                            <td className="py-1 pl-3 w-3/4">: {kelasHarian.tahun} / {kelasHarian.semester}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="py-1 font-semibold pr-3 w-1/5">Rekap Absensi</td>
+                                            <td className="py-1 pl-3 w-3/4">: {month}</td>
+                                        </tr> 
+                                    </tbody>
+                                </table>
+                            </div>
+                            <DataTableJadwal
+                                headers={headers}
+                                rows={rows}
+                                iconClass="fa fa-calendar-check mr-2"
+                                title={`Jadwal Bulan ${month}`}
+                                linkButton={
+                                    <Link
+                                        href={route('dsn.dh.jadwal.absenMhs', {
+                                            uuid_kelas_harian: kelasHarian.uuid,
+                                            month: `${month2}`,
+                                        })}
+                                        className="focus:outline-none text-white bg-gray-700 hover:bg-gray-800 font-medium rounded-lg text-sm px-5 py-2.5"
+                                    >
+                                        <i className="fa-regular fa-clipboard mr-1"></i> Absensi Manual
+                                    </Link>
+                                }
+                            />
+                        </div>
+                    </div>
+                </div>
+            </MyLayout>
+            {showKodePresensi && (
+                <div className="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white p-6 rounded-md shadow-lg max-w-sm w-full">
+                        <h2 className="text-xl font-semibold mb-4 text-center">Kode Presensi</h2>
+                        <div className="flex items-center justify-center mb-4 py-10">
+                            <p className="text-2xl font-semibold text-center">{kodePresensi}</p>
+                        </div>
+                        <div className="flex items-center justify-center gap-5">
+                            <button
+                                onClick={copyToClipboard}
+                                className="mt-4 text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5"
+                            >
+                                <i className="fa fa-copy"></i> Salin
+                            </button>
+                            <button
+                                onClick={handleCloseKodePresensi}
+                                className="mt-4 text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm px-5 py-2.5"
+                            >
+                                <i className="fa fa-close"></i> Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            <DynamicModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSubmit={handleUpdateJadwal}
+                fields={[
+                    { name: 'tanggal', label: 'Tanggal', type: 'date', defaultValue: currentJadwal?.tanggal, required: true, disabled: true },
+                    { name: 'waktu_isi_absen', label: 'Waktu Isi Absen (Menit)', type: 'number', defaultValue: currentJadwal?.waktu_isi_absen, required: true },
+                    { name: 'kode_unik', label: 'Kode Presensi', type: 'text', defaultValue: currentJadwal?.kode_unik, required: true },
+                ]}
+                title="Edit Jadwal"
+                isSubmitting={isSubmitting}
+                errors={errors}
+            />
+        </>
+    );
+};
+
+export default ListNew;

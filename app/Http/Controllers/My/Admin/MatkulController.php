@@ -49,7 +49,7 @@ class MatkulController extends Controller
             'kode_prodi'    => 'required|string|exists:prodis,kode_prodi',
             'kode_matkul'   => 'required|string|max:10|unique:matkuls,kode_matkul',
             'nama_matkul'   => 'required|string|max:255',
-            'sks'           => 'required|integer|min:1|max:6',
+            'sks'           => 'required|integer|min:1|max:8',
             'semester'      => 'required|integer|min:1|max:14',
             'rps'           => 'required|string|max:255|unique:matkuls,rps',
         ]);
@@ -74,7 +74,7 @@ class MatkulController extends Controller
             'kode_prodi' => 'required|string|exists:prodis,kode_prodi',
             'kode_matkul' => "required|string|max:10|unique:matkuls,kode_matkul,{$matkul->id}",
             'nama_matkul' => 'required|string|max:255',
-            'sks' => 'required|integer|min:1|max:6',
+            'sks' => 'required|integer|min:1|max:8',
             'semester' => 'required|integer|min:1|max:14',
             'rps' => 'required|string|max:255|unique:matkuls,rps,' . $matkul->id,
         ]);

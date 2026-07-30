@@ -113,7 +113,7 @@ const Create = () => {
                                             value: angkatan.kode_tahun,
                                             label: `${angkatan.kode_tahun} - ${angkatan.nama_angkatan}`,
                                         }))}
-                                        placeholder="Cari atau pilih mata kuliah"
+                                        placeholder="Cari atau pilih tahun kelas"
                                         error={errors.tahun}
                                     />
 

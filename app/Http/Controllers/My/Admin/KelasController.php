@@ -7,6 +7,7 @@ use App\Models\Angkatan;
 use App\Models\Dosen;
 use App\Models\Kelas;
 use App\Models\Matkul;
+use App\Models\PilihKelas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -108,5 +109,44 @@ class KelasController extends Controller
         $kelas = Kelas::where('uuid', $uuid)->firstOrFail();
         $kelas->delete();
         return redirect()->route('my.kelas.index');
+    }
+
+    public function printAbsensiKelas($uuidKelas)
+    {
+        $kelas = Kelas::where('uuid', $uuidKelas)
+            ->with([
+                'matkul.prodi',
+                'dosen',
+                'pilihKelas.mahasiswa.user',
+                'jadwals.absensis' // Relasi jadwal dan absensi
+            ])
+            ->firstOrFail();
+
+        $mahasiswa = PilihKelas::where('kode_kelas', $kelas->kode_kelas)
+            ->with(['mahasiswa.user'])
+            ->get();
+
+        $mahasiswa = $mahasiswa->sortBy(function ($item) {
+            return $item->mahasiswa->user->name; // Menggunakan nama mahasiswa yang ada pada relasi 'user'
+        });
+
+        $jadwals = $kelas->jadwals->map(function ($jadwal) use ($kelas) {
+            return [
+                'id' => $jadwal->id,
+                'tanggal' => $jadwal->tanggal,
+                'absensi' => $jadwal->absensis->mapWithKeys(function ($absensi) {
+                    return [
+                        $absensi->mahasiswa_id => match ($absensi->status) {
+                            'hadir' => 'H',
+                            'sakit' => 'S',
+                            'izin' => 'I',
+                            default => 'A',
+                        },
+                    ];
+                }),
+            ];
+        });
+        
+        return view('prints.absensi2', compact('kelas', 'mahasiswa', 'jadwals'));
     }
 }

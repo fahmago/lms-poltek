@@ -39,7 +39,7 @@ const MahasiswaImport = () => {
         formData.append('file', file);
 
         // Post the file to the server using Inertia.js
-        Inertia.post(route('my.users.mhs.excel'), formData, {
+        Inertia.post(route('my.users.mhs.excel.post'), formData, {
             onSuccess: () => {
                 setIsLoading(false);
                 ToastNotification({

@@ -125,7 +125,7 @@ const Index = () => {
                     headers={headers}
                     rows={rows}
                     pagination={kelas}
-                    iconClass="fa fa-chalkboard-teacher"
+                    iconClass="fa fa-users-rectangle"
                     title="Data Kelas"
                 />
                 {/* Modal */}

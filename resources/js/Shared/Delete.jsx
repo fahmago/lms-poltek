@@ -3,7 +3,7 @@ import { Inertia } from '@inertiajs/inertia';
 import Swal from 'sweetalert2';
 import ToastNotification from './ToastNotification';
 
-const Delete = ({ URL, id }) => {
+const Delete = ({ URL, id, icon = 'fas fa-trash', onSuccess = null, titleSuccess = 'Berhasil hapus data!', ...props }) => {
     // Method destroy
     const destroy = async () => {
         // Show Sweet Alert for confirmation
@@ -26,6 +26,9 @@ const Delete = ({ URL, id }) => {
                         title: 'Berhasil hapus data!',
                         timer: 2000
                     });
+                    if (onSuccess) {
+                        onSuccess();
+                    }
                 },
                 onError: (error) => {
                     ToastNotification({
@@ -42,8 +45,9 @@ const Delete = ({ URL, id }) => {
         <button
             onClick={destroy}
             className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+            {...props}
         >
-            <i className="fa fa-trash"></i>
+            <i className={icon}></i>
         </button>
     );
 };

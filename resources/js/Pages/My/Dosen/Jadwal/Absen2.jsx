@@ -8,8 +8,8 @@ const Absen = () => {
     const absensiHeaders = jadwals.map((jadwal, index) => `P${index + 1}`);
     const absensiTitle = "Absensi Perkuliahan";
 
-    console.log("Data Mahasiswa:", mahasiswa);
-    console.log("Data Jadwals:", jadwals);
+    // console.log("Data Mahasiswa:", mahasiswa);
+    // console.log("Data Jadwals:", jadwals);
 
     return (
         <>

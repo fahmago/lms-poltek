@@ -34,6 +34,9 @@ const Index = () => {
                         {hasAnyPermission(['kelas.delete']) && (
                             <Delete URL={'/my/kelas'} id={kls.uuid} />
                         )}
+                        <a href={route('my.kelas.printAbsensiKelas', kls.uuid)} target="_blank" className="focus:outline-none text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
+                            <i className="fa fa-print"></i>
+                        </a>
                     </>
                 ) : (
                     <span className="text-red-500 font-semibold">Minta Akses</span>

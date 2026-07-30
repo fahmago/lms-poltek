@@ -61,31 +61,6 @@ const Mahasiswa = ({ activeMenu, setActiveMenu }) => {
               />
             )}
 
-            <li>
-              <a
-                href="#absensholat"
-                onClick={() => setActiveMenu('absensholat')}
-                className={`flex items-center p-2 rounded transition-colors duration-200 ${
-                  activeMenu === 'absensholat' ? 'bg-blue-600 text-white' : 'text-black hover:bg-gray-100'
-                }`}
-              >
-                <i className="fas fa-mosque mr-2"></i> Absensi Sholat
-              </a>
-            </li>
-
-            <li>
-              <div className="px-3 pt-2 text-xs font-bold text-blue-600 uppercase">Pengaturan</div>
-            </li>
-
-            {hasAnyPermission(['mhs.pro.index']) && (  
-              <SidebarLink
-                href={route('mhs.profil.index')}
-                onClick={() => setActiveMenu('my/mhs/profil')}
-                icon="fas fa-user-graduate"
-                label="My Profil"
-                active={url.includes('my/mhs/profil')}
-              />
-            )}
     </>
   )
 }

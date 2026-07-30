@@ -26,8 +26,8 @@ Route::controller(UserController::class)->prefix('users')->name('my.users.')->gr
     Route::delete('/{user}', 'destroy')->name('destroy')->middleware('permission:users.delete');
 
     Route::get('/mhs-excel', 'showImportMhsForm')->name('mhs.excel')->middleware('permission:users.mhs.excel');
-    Route::post('/mhs-excel', 'importMhsExcel')->name('mhs.excel')->middleware('permission:users.mhs.excel');
+    Route::post('/mhs-excel', 'importMhsExcel')->name('mhs.excel.post')->middleware('permission:users.mhs.excel');
 
     Route::get('/dsn-excel', 'showImportDsnForm')->name('dsn.excel')->middleware('permission:users.dsn.excel');
-    Route::post('/dsn-excel', 'importDsnExcel')->name('dsn.excel')->middleware('permission:users.dsn.excel');
+    Route::post('/dsn-excel', 'importDsnExcel')->name('dsn.excel.post')->middleware('permission:users.dsn.excel');
 });

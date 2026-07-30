@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Harian\JadwalHarian;
+use App\Models\Harian\KelasHarian;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Ramsey\Uuid\Guid\Guid;
@@ -55,6 +57,23 @@ class Dosen extends Model
     {
         return Attribute::make(
             get: fn ($image) => $image ? asset('/storage/dosen/' . $image) : asset('/images/no-image.png'),
+        );
+    }
+
+    public function kelasHarians()
+    {
+        return $this->hasMany(KelasHarian::class);
+    }
+
+    public function jadwalDosenHarians()
+    {
+        return $this->hasManyThrough(
+            JadwalHarian::class,    // Model tujuan yang ingin kita ambil
+            KelasHarian::class,     // Model perantara
+            'dosen_id',             // Foreign key di tabel 'kelas_harians'
+            'kelas_harian_id',      // Foreign key di tabel 'jadwal_harians'
+            'id',                   // Local key di tabel 'dosens'
+            'id'                    // Local key di tabel 'kelas_harians'
         );
     }
 }

@@ -39,7 +39,7 @@ const DosenImport = () => {
         formData.append('file', file);
 
         // Post the file to the server using Inertia.js
-        Inertia.post(route('my.users.dsn.excel'), formData, {
+        Inertia.post(route('my.users.dsn.excel.post'), formData, {
             onSuccess: () => {
                 setIsLoading(false);
                 ToastNotification({

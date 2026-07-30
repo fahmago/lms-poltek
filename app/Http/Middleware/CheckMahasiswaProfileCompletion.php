@@ -32,7 +32,16 @@ class CheckMahasiswaProfileCompletion
         //             ->with('warning', 'Silakan lengkapi profil Anda terlebih dahulu.');
         //     }
         // }
-        if ($user->roles()->where('name', 'mahasiswa')->exists() && !$user->mahasiswa->is_lengkap) {
+        // if ($user->roles()->where('name', 'mahasiswa')->exists() && !$user->mahasiswa->is_lengkap) {
+        //     return redirect()
+        //         ->route('mhs.profil.index')
+        //         ->with('warning', 'Silakan lengkapi profil Anda terlebih dahulu.');
+        // }
+
+        if (
+            $user->hasAnyRole(['mahasiswa', 'mahasiswa harian']) &&
+            (!$user->mahasiswa || !$user->mahasiswa->is_lengkap)
+        ) {
             return redirect()
                 ->route('mhs.profil.index')
                 ->with('warning', 'Silakan lengkapi profil Anda terlebih dahulu.');

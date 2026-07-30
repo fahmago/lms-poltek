@@ -1,0 +1,51 @@
+name: 🚀 Deploy to Production
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v3
+
+    - name: 🐘 Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: mbstring, dom, fileinfo, curl
+        coverage: none
+
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '22'
+
+    - name: 📦 Install Laravel Envoy
+      run: |
+        composer global require laravel/envoy
+        composer global require phpoption/phpoption vlucas/phpdotenv
+        echo "$(composer global config bin-dir --absolute)" >> $GITHUB_PATH
+
+    - name: 🔐 Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+    - name: 🚀 Deploy with Envoy
+      env:
+        DEPLOY_USER: ${{ secrets.SSH_USER }}
+        DEPLOY_HOST: ${{ secrets.SSH_HOST }}
+        DEPLOY_PORT: ${{ secrets.SSH_PORT }}
+        DB_HOST: ${{ secrets.DB_HOST }}
+        DB_DATABASE: ${{ secrets.DB_DATABASE }}
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        GHB_TOKEN: ${{ secrets.GHB_TOKEN }}
+      run: envoy run deploy

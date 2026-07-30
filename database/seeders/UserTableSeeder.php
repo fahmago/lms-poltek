@@ -15,11 +15,21 @@ class UserTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::create([
-            'name' => 'Administrator',
-            'email' => 'admin@gmail.com',
-            'password' => bcrypt('1234'),
-        ]);
+        // $user = User::firstOrCreate([
+        //     'name' => 'Administrator',
+        //     'email' => 'admin@gmail.com',
+        //     'password' => bcrypt('1234'),
+        // ]);
+
+        $user = User::where('email', 'admin@gmail.com')->first();
+
+        if (!$user) {
+            $user = User::create([
+                'name' => 'Administrator',
+                'email' => 'admin@gmail.com',
+                'password' => bcrypt('1234'),
+            ]);
+        }
 
         //get all permissions
         // $permissions = Permission::all();

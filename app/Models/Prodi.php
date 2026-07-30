@@ -2,6 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Pekanan\TugasPekanan;
+use App\Models\SKL\Buku;
+use App\Models\SKL\Portofolio;
+use App\Models\SKL\ProjectSemester;
+use App\Models\SKL\Sertifikat;
 use Illuminate\Database\Eloquent\Model;
 use Ramsey\Uuid\Guid\Guid;
 
@@ -39,6 +44,31 @@ class Prodi extends Model
     public function matkuls()
     {
         return $this->hasMany(Matkul::class, 'kode_prodi', 'kode_prodi');
+    }
+
+    public function tugasPekanans()
+    {
+        return $this->hasMany(TugasPekanan::class);
+    }
+
+    public function projectSemesters()
+    {
+        return $this->hasMany(ProjectSemester::class);
+    }
+
+    public function portofolios()
+    {
+        return $this->hasMany(Portofolio::class);
+    }
+
+    public function bukus()
+    {
+        return $this->hasMany(Buku::class);
+    }
+
+    public function sertifikats()
+    {
+        return $this->hasMany(Sertifikat::class);
     }
     
 }

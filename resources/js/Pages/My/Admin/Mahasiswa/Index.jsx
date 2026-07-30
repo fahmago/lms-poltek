@@ -1,15 +1,29 @@
 import { Head, Link, usePage } from '@inertiajs/inertia-react';
-import React from 'react';
+import React, { useState } from 'react';
 import MyLayout from '../../../../Layouts/MyLayout';
 import hasAnyPermission from '../../../../Utilities/Permissions';
 import Search from '../../../../Shared/Search';
 import DataTable from '../../../../Shared/DataTable';
 import Delete from '../../../../Shared/Delete';
+import Modal from '../../../../Shared/Modal';
 
 const Index = () => {
     const { mahasiswas } = usePage().props;
 
-    // console.log(mahasiswas);
+    // 3. Tambahkan state untuk modal
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedMahasiswa, setSelectedMahasiswa] = useState(null);
+
+    // 4. Buat fungsi untuk handle modal
+    const handleOpenModal = (mhs) => {
+        setSelectedMahasiswa(mhs);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedMahasiswa(null);
+    };
     
     const headers = ["No.", "Foto", "Nim", "Nama Mahasiswa", "Angkatan", "Actions"];
 
@@ -23,6 +37,13 @@ const Index = () => {
             <div className="flex justify-center">
                 {hasAnyPermission(['mahasiswas.edit', 'mahasiswas.delete']) ? (
                     <>
+                        {hasAnyPermission(['mahasiswas.list-kelas']) && (
+                            <button
+                                onClick={() => handleOpenModal(mhs)} 
+                                className="focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                <i className="fa fa-eye"></i>
+                            </button>
+                        )}
                         {hasAnyPermission(['mahasiswas.edit']) && (
                             <Link
                                 href={`/my/mahasiswa/${mhs.uuid}/edit`}
@@ -31,7 +52,11 @@ const Index = () => {
                             </Link>
                         )}
                         {hasAnyPermission(['mahasiswas.delete']) && (
-                            <Delete URL={'/my/mahasiswa'} id={mhs.uuid} />
+                            <Delete 
+                                URL={'/my/mahasiswa'} 
+                                title="Hapus Mahasiswa"
+                                id={mhs.uuid} 
+                            />
                         )}
                     </>
                 ) : (
@@ -40,6 +65,24 @@ const Index = () => {
             </div>
         )
     ]);
+
+    const modalHeaders = ["No.", "Tahun", "Semester", "Kode", "Kelas", "Pengajar", "Actions"];
+    const kelasRows = selectedMahasiswa?.kelas_harians_kehadiran_status?.map((kelas, index) => [
+        index + 1,
+        kelas.tahun,
+        kelas.semester,
+        kelas.kode_kelas_harian,
+        kelas.nama_kelas,
+        kelas.dosen?.user?.name || 'N/A', // Pastikan properti `nama` di model Dosen sesuai
+        <Delete
+            URL={'/my/mahasiswa/kelas-harian'}
+            id={kelas.pivot.uuid}
+            icon='fas fa-sign-out-alt' // Tambahkan ikon keluar
+            onSuccess={() => handleCloseModal()}
+            titleSuccess={`${selectedMahasiswa.user.name} berhasil dikeluarkan dari kelas ${kelas.nama_kelas}.`}
+            title={`Keluarkan ${selectedMahasiswa.user.name} dari kelas ${kelas.nama_kelas}?`}
+        />
+    ]) || [];
 
   return (
     <>
@@ -67,6 +110,20 @@ const Index = () => {
                 iconClass="fa fa-user-graduate"
                 title="Data Mahasiswa"
             />
+            {/* 6. Render komponen Modal */}
+                <Modal
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                    title={`Daftar Kelas - ${selectedMahasiswa ? selectedMahasiswa.user.name : ''}`}
+                >
+                    <DataTable
+                        headers={modalHeaders}
+                        rows={kelasRows}
+                        iconClass="fa fa-chalkboard-teacher"
+                        title="Kelas yang Diikuti"
+                        // Tidak perlu pagination untuk data di modal ini
+                    />
+                </Modal>
         </MyLayout>
     </>
   )
