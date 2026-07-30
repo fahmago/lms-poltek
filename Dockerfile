@@ -22,6 +22,7 @@ FROM serversideup/php:8.3-fpm-nginx
 WORKDIR /var/www/html
 
 # Install PHP extensions (gd dibutuhkan untuk phpoffice/phpspreadsheet - import Excel)
+USER root
 RUN install-php-extensions gd zip
 
 # Copy composer files first for better caching
@@ -52,6 +53,9 @@ RUN chown -R www-data:www-data \
     /var/www/html/storage \
     /var/www/html/bootstrap/cache \
     /var/www/html/public
+
+# Switch back to non-root user for security
+USER www-data
 
 # Expose port 80
 EXPOSE 80
