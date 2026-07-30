@@ -21,9 +21,8 @@ FROM serversideup/php:8.3-fpm-nginx
 # Set working directory
 WORKDIR /var/www/html
 
-# Install PHP extensions if needed (already included in base image)
-# Uncomment if you need additional extensions:
-# RUN install-php-extensions pdo_mysql zip gd
+# Install PHP extensions (gd dibutuhkan untuk phpoffice/phpspreadsheet - import Excel)
+RUN install-php-extensions gd zip
 
 # Copy composer files first for better caching
 COPY composer.json composer.lock ./
