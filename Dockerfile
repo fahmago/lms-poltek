@@ -57,5 +57,5 @@ RUN mkdir -p /run/php && chown -R www-data:www-data /run/php
 # Switch to non-root user for runtime (image expects www-data)
 USER www-data
 
-# Expose port 80
-EXPOSE 80
+# Expose port 8080 (serversideup/php uses 8080 for Nginx)
+EXPOSE 8080
