@@ -42,11 +42,8 @@ COPY . .
 # Copy built frontend assets from stage 1
 COPY --from=frontend /app/public/build ./public/build
 
-# Generate optimized caches
-RUN composer dump-autoload --optimize \
-    && php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+# Generate optimized autoloader only (config/route/view cache run at runtime)
+RUN composer dump-autoload --optimize
 
 # Set correct permissions for all application files
 RUN chown -R www-data:www-data /var/www/html
