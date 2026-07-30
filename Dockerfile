@@ -54,12 +54,9 @@ RUN chown -R www-data:www-data \
     /var/www/html/bootstrap/cache \
     /var/www/html/public
 
-# Switch back to non-root user for security
-USER www-data
-
 # Expose port 80
 EXPOSE 80
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+# Health check - longer start period for Nginx+PHP-FPM initialization
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=5 \
     CMD curl -f http://localhost/ || exit 1
