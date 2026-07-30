@@ -48,11 +48,14 @@ RUN composer dump-autoload --optimize \
     && php artisan route:cache \
     && php artisan view:cache
 
-# Set correct permissions
-RUN chown -R www-data:www-data \
-    /var/www/html/storage \
-    /var/www/html/bootstrap/cache \
-    /var/www/html/public
+# Set correct permissions for all application files
+RUN chown -R www-data:www-data /var/www/html
+
+# Ensure PHP-FPM and Nginx runtime directories have correct permissions
+RUN mkdir -p /run/php && chown -R www-data:www-data /run/php
+
+# Switch to non-root user for runtime (image expects www-data)
+USER www-data
 
 # Expose port 80
 EXPOSE 80
