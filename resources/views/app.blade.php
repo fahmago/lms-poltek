@@ -14,6 +14,13 @@
   @vite('resources/js/app.jsx')
   @inertiaHead
   @routes
+  <script>
+    // Override Ziggy URL with APP_URL for correct protocol behind reverse proxy
+    if (window.Ziggy) {
+      window.Ziggy.url = '{{ config("app.url") }}';
+      window.Ziggy.port = null;
+    }
+  </script>
 </head>
 
 <body>
