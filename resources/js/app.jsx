@@ -3,6 +3,8 @@ import { createInertiaApp } from '@inertiajs/inertia-react';
 import { createRoot } from 'react-dom/client';
 import { InertiaProgress } from '@inertiajs/progress'; // Import InertiaProgress
 
+// v2 - fix mixed content behind reverse proxy
+
 // npm install @inertiajs/progress
 // Menambahkan InertiaProgress untuk menampilkan progress bar
 InertiaProgress.init({
