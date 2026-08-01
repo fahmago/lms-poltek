@@ -15,7 +15,18 @@
   @inertiaHead
   @routes
   <script>
-    // Override Ziggy URL with APP_URL for correct protocol behind reverse proxy
+    // Force HTTPS for all XHR requests (fix Mixed Content behind reverse proxy)
+    (function() {
+      var origOpen = XMLHttpRequest.prototype.open;
+      XMLHttpRequest.prototype.open = function() {
+        if (arguments[1] && typeof arguments[1] === 'string' && arguments[1].startsWith('http://')) {
+          arguments[1] = arguments[1].replace('http://', 'https://');
+        }
+        return origOpen.apply(this, arguments);
+      };
+    })();
+
+    // Also fix Ziggy URL
     if (window.Ziggy) {
       window.Ziggy.url = '{{ config("app.url") }}';
       window.Ziggy.port = null;
